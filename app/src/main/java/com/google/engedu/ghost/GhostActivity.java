@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 
@@ -37,17 +38,20 @@ public class GhostActivity extends AppCompatActivity {
     private GhostDictionary dictionary;
     private boolean userTurn = false;
     private Random random = new Random();
+    private String topText = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ghost);
         AssetManager assetManager = getAssets();
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+        try {
+            InputStream inputStream = assetManager.open("words.txt");
+            dictionary = new SimpleDictionary(inputStream);
+        } catch (IOException e) {
+            Toast toast = Toast.makeText(this, "Could not load dictionary", Toast.LENGTH_LONG);
+            toast.show();
+        }
         onStart(null);
     }
 
@@ -108,11 +112,12 @@ public class GhostActivity extends AppCompatActivity {
      */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
+        if (keyCode > 28 && keyCode < 54) {
+            char characterKey = (char) event.getUnicodeChar();
+            topText += characterKey;
+            TextView mainText = (TextView) findViewById(R.id.ghostText);
+            mainText.setText(topText);
+        }
         return super.onKeyUp(keyCode, event);
     }
 }
