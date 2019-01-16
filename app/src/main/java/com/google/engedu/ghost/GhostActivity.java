@@ -23,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +41,10 @@ public class GhostActivity extends AppCompatActivity {
     private Random random = new Random();
     private String topText = "";
 
+    // initialize values
+//    Button buttonForChallenge = (Button) .findViewById(R.id.challengeButton);
+//    buttonForChallenge.setText("Challenge");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +57,14 @@ public class GhostActivity extends AppCompatActivity {
             Toast toast = Toast.makeText(this, "Could not load dictionary", Toast.LENGTH_LONG);
             toast.show();
         }
+
+        // initialize button values
+        Button buttonForChallenge = (Button) findViewById(R.id.challengeButton);
+        buttonForChallenge.setText("Challenge");
+
+        Button buttonForReset = (Button) findViewById(R.id.resetButton);
+        buttonForReset.setText("Reset");
+
         onStart(null);
     }
 
@@ -80,6 +93,7 @@ public class GhostActivity extends AppCompatActivity {
     /**
      * Handler for the "Reset" button.
      * Randomly determines whether the game starts with a user turn or a computer turn.
+     *
      * @param view
      * @return true
      */
@@ -106,6 +120,7 @@ public class GhostActivity extends AppCompatActivity {
 
     /**
      * Handler for user key presses.
+     *
      * @param keyCode
      * @param event
      * @return whether the key stroke was handled.
@@ -117,6 +132,10 @@ public class GhostActivity extends AppCompatActivity {
             topText += characterKey;
             TextView mainText = (TextView) findViewById(R.id.ghostText);
             mainText.setText(topText);
+            if (dictionary.isWord(topText)) {
+                TextView statusText = (TextView) findViewById(R.id.gameStatus);
+                statusText.setText("This is a word. Congrats!!");
+            }
         }
         return super.onKeyUp(keyCode, event);
     }

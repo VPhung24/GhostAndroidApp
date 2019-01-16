@@ -15,6 +15,8 @@
 
 package com.google.engedu.ghost;
 
+import android.widget.TextView;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
