@@ -19,6 +19,7 @@ import android.content.res.AssetManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,10 +41,6 @@ public class GhostActivity extends AppCompatActivity {
     private boolean userTurn = false;
     private Random random = new Random();
     private String topText = "";
-
-    // initialize values
-//    Button buttonForChallenge = (Button) .findViewById(R.id.challengeButton);
-//    buttonForChallenge.setText("Challenge");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,9 +110,34 @@ public class GhostActivity extends AppCompatActivity {
 
     private void computerTurn() {
         TextView label = (TextView) findViewById(R.id.gameStatus);
-        // Do computer turn stuff then make it the user's turn again
-        userTurn = true;
-        label.setText(USER_TURN);
+        TextView mainText = (TextView) findViewById(R.id.ghostText);
+        if (!userTurn) {
+            if (topText.length() == 0) {
+                String word = dictionary.getAnyWordStartingWith(topText);
+                topText += word.charAt(0);
+                mainText.setText(topText);
+                Log.d("vivian", "pi");
+
+                label.setText(USER_TURN);
+                userTurn = true;
+            } else if (topText.length() > 3 && dictionary.isWord(topText)) {
+                label.setText("This is a word. The computer challenges and wins!!");
+                Log.d("vivian", "2");
+            } else if (dictionary.getAnyWordStartingWith(topText) == null) {
+                label.setText("This can't be a word. The computer challenges and wins!!");
+                Log.d("vivian", "3");
+            } else if (dictionary.getAnyWordStartingWith(topText) != null) {
+                Log.d("vivian", "shrimp");
+                String word = dictionary.getAnyWordStartingWith(topText);
+                int strLength = topText.length();
+                topText += word.charAt(strLength);
+                mainText.setText(topText);
+
+                label.setText(USER_TURN);
+                userTurn = true;
+            }
+        }
+        Log.d("vivian", "turn over");
     }
 
     /**
@@ -127,15 +149,14 @@ public class GhostActivity extends AppCompatActivity {
      */
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (keyCode > 28 && keyCode < 54) {
+        if (keyCode > 28 && keyCode < 54 && userTurn) {
             char characterKey = (char) event.getUnicodeChar();
             topText += characterKey;
             TextView mainText = (TextView) findViewById(R.id.ghostText);
             mainText.setText(topText);
-            if (dictionary.isWord(topText)) {
-                TextView statusText = (TextView) findViewById(R.id.gameStatus);
-                statusText.setText("This is a word. Congrats!!");
-            }
+
+            userTurn = false;
+            computerTurn();
         }
         return super.onKeyUp(keyCode, event);
     }

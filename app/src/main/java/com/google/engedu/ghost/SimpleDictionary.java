@@ -15,6 +15,7 @@
 
 package com.google.engedu.ghost;
 
+import android.util.Log;
 import android.widget.TextView;
 
 import java.io.BufferedReader;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SimpleDictionary implements GhostDictionary {
     private ArrayList<String> words;
@@ -39,12 +41,79 @@ public class SimpleDictionary implements GhostDictionary {
 
     @Override
     public boolean isWord(String word) {
+        Log.d("vivian", "hi");
         return words.contains(word);
+    }
+
+    public String binarySearchDict(String word, ArrayList dict) {
+        Log.d("vivian", "running binary");
+        int min = 0;
+        int max = dict.size() - 1;
+        int mid = (int) ((max + 1 - min) / 2);
+        String value = (String)(dict.get(mid));
+
+//        if (dict.isEmpty()) {
+//            Log.d("vivian", "55");
+//            return false;
+//        }
+
+        if (value.toLowerCase().contains(word.toLowerCase())) {
+            Log.d("vivian", "44");
+            return value;
+        }
+
+        if ((value).equals(word)) {
+            Log.d("vivian", "33");
+            return value;
+        }
+
+        // if mid is "b.." and word is "a"
+        if ((value).compareTo(word) > 0) {
+            max = mid - 1;
+            ArrayList<String> newdict = new ArrayList<String> (dict.subList(min, max));
+            Log.d("vivian", "11");
+            return binarySearchDict(word, newdict);
+        }
+
+        if ((value).compareTo(word) < 0) {
+            min = mid + 1;
+            ArrayList<String> newdict = new ArrayList<String> (dict.subList(min, max));
+            Log.d("vivian", "22");
+            return binarySearchDict(word, newdict);
+        }
+        return "-1";
+
     }
 
     @Override
     public String getAnyWordStartingWith(String prefix) {
-        return null;
+        Log.d("vivian", "time 2");
+        // if string is empty
+        if (prefix == "") {
+            Random random = new Random();
+            int num = random.nextInt(words.size());
+            return words.get(num);
+        }
+
+        // if prefix is a word
+        else if (prefix.length() > 3 && isWord(prefix)) {
+            return prefix;
+        }
+
+        // if string is not empty, complete binary search for next word
+        // if no such word, return null
+        else {
+            Log.d("vivian", "here");
+            if (binarySearchDict(prefix, words) == "-1") {
+                Log.d("vivian", "apple");
+//                Log.d("vivian", ((String) binarySearchDict(prefix, words)));
+                return null;
+            } else {
+                Log.d("vivian", "swift");
+//                Log.d("vivian", ((String) binarySearchDict(prefix, words)));
+                return binarySearchDict(prefix, words);
+            }
+        }
     }
 
     @Override
